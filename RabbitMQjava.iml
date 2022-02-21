@@ -7,6 +7,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="com.rabbitmq:amqp-client:5.0.0" level="project" />
+    <orderEntry type="library" name="amqp-client-5.7.2" level="project" />
+    <orderEntry type="library" name="slf4j.jdk14" level="project" />
   </component>
 </module>
