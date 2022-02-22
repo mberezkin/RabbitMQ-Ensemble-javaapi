@@ -1,79 +1,98 @@
 package isc.rabbitmq;
 
-import com.rabbitmq.client.impl.LongStringHelper;
-
 public class Test {
-    public static void main(String[] args) throws Exception {
-        String host = "localhost";
-        int port = 5672;
-        String user = "guest";
-        String pass = "guest";
-        String virtualHost = "/";
-        String queue = "Test";
-        int durable = 0;
+    public static void main(String[] args) {
 
-        // create connections and channel
-        API api = new API(host, port, user, pass, virtualHost, queue);
-        if (api.isLastError()) {
-            System.out.println(api.getLastErrorMessage());
-            api.close();
-            return;
-        }
+        try {
+
+            String host = "localhost";
+            int port = 5672;
+            String user = "guest";
+            String pass = "guest";
+            String virtualHost = "/";
+            String queue = "Test";
+
+            // create connections and channel
+            API api = new API(host, port, user, pass, virtualHost, queue);
+            if (api.isLastError()) {
+                System.out.println(api.getLastErrorMessage());
+                api.close();
+                return;
+            }
+
+            /*
+            // queueDeclare
+            if (api.queueDeclare(false, false, false)) {
+                System.out.println(api.getLastErrorMessage());
+                api.close();
+                return;
+            };
+
+            // exchangeDeclare
+            if (api.exchangeDeclare("direct", false, false, false)) {
+                System.out.println(api.getLastErrorMessage());
+                api.close();
+                return;
+            };
+            */
+
+            // sendMessage
+            APIMessage mesRequest = new APIMessage("text/xml", 1);
+
+            // Headers
+            mesRequest.setHeader("system", "MySystem");
+            mesRequest.setHeader("node-request", "test.server");
+            mesRequest.setHeader("service-name", "getClient");
+
+            // Body
+            mesRequest.setBodyString("Test message - русский текст");
+
+            // MessageId
+            mesRequest.MessageId = "00036";
+
+            api.sendMessage(mesRequest);
+            if (api.isLastError()) {
+                System.out.println(api.getLastErrorMessage());
+                api.close();
+                return;
+            }
+/*
+            // readMessage
+            APIMessage mesResponse = api.readMessage();
+            if (mesResponse == null || api.isLastError()) {
+                System.out.println(api.getLastErrorMessage());
+                api.close();
+                return;
+            }
+
+            // output message response
+            System.out.println(mesResponse);
 
         /*
-        // queueDeclare
-        if (api.queueDeclare(false, false, false)) {
-            System.out.println(api.getLastErrorMessage());
-            api.close();
-            return;
-        };
-
-        // exchangeDeclare
-        if (api.exchangeDeclare("direct", false, false, false)) {
-            System.out.println(api.getLastErrorMessage());
-            api.close();
-            return;
-        };
-         */
-
-        // sendMessageIdHeaders
-        api.ContentType = "text/xml";
-        api.DeliveryMode = 1;
-        String[] headers = {"system=AnyWay", "node-request=test.anyway", "service-name=getClient"};
-
-        api.sendMessageIdHeaders("Test message русский текст".getBytes("UTF8"), "", "0005", headers);
-        if (api.isLastError()) {
-            System.out.println(api.getLastErrorMessage());
-            api.close();
-            return;
-        }
-
-        // readMessageString
-        String[] arHeaders = new String[5];
-        String[] arProps = api.readMessageString(arHeaders);
-        if (api.isLastError()) {
-            System.out.println(api.getLastErrorMessage());
-            api.close();
-            return;
-        }
-
+        // BasicProperties
+        String [] arProps = mesRequest.getProperties();
         if (arProps != null) {
-            System.out.println("Props");
-            for (int i = 0; i < arProps.length; i++) {
-                System.out.println("    "+ arProps[i]);
-            }
+            System.out.println("BasicProperties:");
+            //for (String prop : arProps) System.out.println("    "+ prop);
+            System.out.println(mesRequest.propertiesToString());
         }
 
-        System.out.println(" ");
-
+        // Headers
+        String [] arHeaders = mesRequest.getHeaders();
         if (arHeaders != null) {
-            System.out.println("Headers");
-            for (int i = 0; i < arHeaders.length && arHeaders[i] != null; i++) {
-                System.out.println("    "+ arHeaders[i]);
-            }
+            System.out.println("Headers:");
+            //for (String header : arHeaders) System.out.println("    "+ header);
+            System.out.println(mesRequest.headersToString());
         }
 
-        api.close();
+        // Body
+        System.out.println("Body:");
+        System.out.println("    "+ mesResponse.getBodyString());
 
+*/
+            api.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 }
