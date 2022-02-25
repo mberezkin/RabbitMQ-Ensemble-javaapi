@@ -1,5 +1,7 @@
 package isc.rabbitmq;
 
+import java.util.Date;
+
 public class Test {
     public static void main(String[] args) {
 
@@ -48,7 +50,10 @@ public class Test {
             mesRequest.setBodyString("Test message - русский текст");
 
             // MessageId
-            mesRequest.MessageId = "00036";
+            mesRequest.MessageId = "00052";
+
+            // Timestamp
+            mesRequest.setTimestampMilliSeconds(new Date().getTime());
 
             api.sendMessage(mesRequest);
             if (api.isLastError()) {

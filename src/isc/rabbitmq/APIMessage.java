@@ -4,6 +4,7 @@ import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.impl.LongStringHelper;
 
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,6 +13,9 @@ import java.util.Map;
 
 /// class APIMessage
 public class APIMessage {
+    private final String _newLine;
+    private final SimpleDateFormat _dateFormat;
+
     public int MessageCount = 0;
 
     // BasicProperties
@@ -27,12 +31,18 @@ public class APIMessage {
     public String ClusterId = null;
     public Integer DeliveryMode = null;
     public Integer Priority = null;
-    public Date Timestamp = null;
+
+
+    private Date Timestamp = null;
+    public String getTimestamp() { return (Timestamp != null ? _dateFormat.format(Timestamp) : null); }
+    public long getTimestampMilliSeconds() { return (Timestamp != null ? Timestamp.getTime() : 0); }
+    public void setTimestamp(String timestamp) throws java.text.ParseException { Timestamp = (timestamp != null ? _dateFormat.parse(timestamp) : null); }
+    public void setTimestampMilliSeconds(long MilliSeconds) {
+        Timestamp = new Date(MilliSeconds);
+    }
 
     private byte[] _body;
     private final Map<String, Object> _headers;
-
-    private final String _newLine;
 
     /// Constructor by default
     public APIMessage() throws Exception {
@@ -40,6 +50,7 @@ public class APIMessage {
         _headers = new HashMap<>();
 
         _newLine = System.lineSeparator();
+        _dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     }
 
     /// Constructor with parameters: String contentType, int deliveryMode
@@ -181,7 +192,7 @@ public class APIMessage {
         if (ClusterId != null) lstProps.add("ClusterId=" + ClusterId);
         if (DeliveryMode != null) lstProps.add("DeliveryMode=" + DeliveryMode);
         if (Priority != null) lstProps.add("Priority=" + Priority);
-        if (Timestamp != null) lstProps.add("Timestamp=" + Timestamp);
+        if (Timestamp != null) lstProps.add("Timestamp=" + getTimestamp());
 
         return lstProps.toArray(new String[0]);
     }

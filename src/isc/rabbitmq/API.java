@@ -1,6 +1,7 @@
 package isc.rabbitmq;
 
 import com.rabbitmq.client.*;
+import java.util.Date;
 
 /**
  * Created by eduard on 06.10.2017.
@@ -215,7 +216,10 @@ public class API {
             message.ClusterId = props.getClusterId();
             message.DeliveryMode = props.getDeliveryMode();
             message.Priority = props.getPriority() ;
-            message.Timestamp = props.getTimestamp();
+
+            Date timestamp = props.getTimestamp();
+            if (timestamp != null) message.setTimestampMilliSeconds(timestamp.getTime());
+            else message.setTimestamp(null);
 
             // fill headers
             LastError.setHeader("API::getMessageFromQueue.setHeaders");
