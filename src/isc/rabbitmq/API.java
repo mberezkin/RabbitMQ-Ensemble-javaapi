@@ -71,8 +71,6 @@ public class API {
 
     /// String host, int port, String user, String pass, String virtualHost, String queue, String exchange
     public API(String host, int port, String user, String pass, String virtualHost, String queue, String exchange)  throws Exception {
-        _queue = queue;
-
         Connection con = null;
         try {
 
@@ -98,9 +96,7 @@ public class API {
             LastError.setHeader("API::createChannel");
             _channel = con.createChannel();
 
-            // Do we need to declare queue?
-            // No if we're sending by exchange/routing_key
-            if (exchange != null && !exchange.isEmpty()) {
+            if (queue != null && !queue.isEmpty()) {
                 // Check that queue exists
                 // Method throws exception if queue does not exist or is exclusive
                 // Correct exception text: channel error; protocol method: #method<channel.close>(reply-code=404, reply-text=NOT_FOUND - no queue 'queue'
@@ -108,8 +104,8 @@ public class API {
                 _channel.queueDeclarePassive(queue); // AMQP.Queue.DeclareOk
             }
 
-            // if connect to queue successful continue
-            if (exchange != null) {
+            if (exchange != null && !exchange.isEmpty()) {
+                // Check that exchange exists
                 LastError.setHeader("API::exchangeDeclarePassive");
                 _channel.exchangeDeclarePassive(exchange); // AMQP.Exchange.DeclareOk
             }
@@ -119,6 +115,7 @@ public class API {
         }
 
         _connection = con;
+        _queue = (queue != null ? queue : "");;
         _exchange = (exchange != null ? exchange : "");
     }
 
