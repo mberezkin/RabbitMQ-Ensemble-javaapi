@@ -61,7 +61,7 @@ public class Test {
                 api.close();
                 return;
             }
-/*
+
             // readMessage
             APIMessage mesResponse = api.readMessage();
             if (mesResponse == null || api.isLastError()) {
@@ -73,7 +73,7 @@ public class Test {
             // output message response
             System.out.println(mesResponse);
 
-        /*
+
         // BasicProperties
         String [] arProps = mesRequest.getProperties();
         if (arProps != null) {
@@ -94,7 +94,7 @@ public class Test {
         System.out.println("Body:");
         System.out.println("    "+ mesResponse.getBodyString());
 
-*/
+
             api.close();
         } catch (Exception e) {
             System.out.println(e.getMessage());
